@@ -52,7 +52,11 @@ public class App {
     }
 
     private void run() {
+        final int DESIRED_FPS = 100;
+        final double MILLIS_PER_FRAME = 1000D / DESIRED_FPS;
+
         while(!disconnect()) {
+            long startTime = System.nanoTime();
             controller.update();
             deltaTime = getDeltaTime();
             pause();
@@ -75,6 +79,15 @@ public class App {
                 mouseMove();
                 scroll();
                 //middleScroll();
+            }
+
+            long elapsedTime = System.nanoTime() - startTime;
+            double elapsedMilliseconds = elapsedTime / 1000000D;
+            long remainingFrameTime = (long) (MILLIS_PER_FRAME - elapsedMilliseconds);
+            if(remainingFrameTime > 0) {
+                try {
+                    Thread.sleep(remainingFrameTime);
+                } catch(Exception e) {System.out.println(e.getMessage());}
             }
         }
 
